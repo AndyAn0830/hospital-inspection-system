@@ -1120,21 +1120,16 @@
                 inspectionRecords = [];
             }
             
-            // 設定並持續更新當前台灣時間
+            // 設定並持續更新當前時間
             function updateCurrentTime() {
-                // 獲取當前 UTC 時間
                 var now = new Date();
                 
-                // 計算台灣時間（UTC+8）
-                // 取得 UTC 時間的毫秒數，加上 8 小時
-                var taiwanTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
-                
-                // 格式化為 YYYY-MM-DDTHH:MM
-                var year = taiwanTime.getUTCFullYear();
-                var month = String(taiwanTime.getUTCMonth() + 1).padStart(2, '0');
-                var day = String(taiwanTime.getUTCDate()).padStart(2, '0');
-                var hours = String(taiwanTime.getUTCHours()).padStart(2, '0');
-                var minutes = String(taiwanTime.getUTCMinutes()).padStart(2, '0');
+                // 直接使用本地時間，格式化為 YYYY-MM-DDTHH:MM
+                var year = now.getFullYear();
+                var month = String(now.getMonth() + 1).padStart(2, '0');
+                var day = String(now.getDate()).padStart(2, '0');
+                var hours = String(now.getHours()).padStart(2, '0');
+                var minutes = String(now.getMinutes()).padStart(2, '0');
                 
                 var timeString = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
                 
