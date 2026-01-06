@@ -1122,21 +1122,23 @@
             
             // 設定並持續更新當前台灣時間
             function updateCurrentTime() {
+                // 獲取當前 UTC 時間
                 var now = new Date();
                 
-                // 取得台灣時區的時間（UTC+8）
-                // 使用 toLocaleString 配合時區選項
-                var taiwanTimeStr = now.toLocaleString('sv-SE', { 
-                    timeZone: 'Asia/Taipei',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                }).replace(' ', 'T');
+                // 計算台灣時間（UTC+8）
+                // 取得 UTC 時間的毫秒數，加上 8 小時
+                var taiwanTime = new Date(now.getTime() + (8 * 60 * 60 * 1000));
                 
-                document.getElementById('inspectionDateTime').value = taiwanTimeStr;
+                // 格式化為 YYYY-MM-DDTHH:MM
+                var year = taiwanTime.getUTCFullYear();
+                var month = String(taiwanTime.getUTCMonth() + 1).padStart(2, '0');
+                var day = String(taiwanTime.getUTCDate()).padStart(2, '0');
+                var hours = String(taiwanTime.getUTCHours()).padStart(2, '0');
+                var minutes = String(taiwanTime.getUTCMinutes()).padStart(2, '0');
+                
+                var timeString = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+                
+                document.getElementById('inspectionDateTime').value = timeString;
             }
             
             // 初始化時間
