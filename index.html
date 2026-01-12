@@ -2627,36 +2627,34 @@
         
         // 建立 Flex Message
         
-        // 發送 LINE API 訊息（核心函數）
+        // 發送 LINE API 訊息（透過 Google Apps Script 代理，避免 CORS）
         function sendLineApiMessage(token, targetId, messages) {
-            var url = 'https://api.line.me/v2/bot/message/push';
+            var googleSheetsUrl = localStorage.getItem('googleSheetsUrl');
+            
+            if (!googleSheetsUrl) {
+                console.log('未設定 Google Sheets 網址，無法發送 LINE 通知');
+                showMessage('請先設定 Google Sheets 網址才能使用 LINE 通知', 'error');
+                return;
+            }
             
             var data = {
-                to: targetId,
+                action: 'sendLine',
+                token: token,
+                targetId: targetId,
                 messages: messages
             };
             
-            fetch(url, {
+            fetch(googleSheetsUrl, {
                 method: 'POST',
+                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
                 },
                 body: JSON.stringify(data)
             })
-            .then(function(response) {
-                if (response.ok) {
-                    console.log('LINE 通知發送成功');
-                    showMessage('✓ LINE 通知已發送', 'success');
-                    return response.json();
-                } else {
-                    return response.json().then(function(error) {
-                        throw new Error('LINE API 錯誤: ' + error.message);
-                    });
-                }
-            })
-            .then(function(data) {
-                console.log('LINE API 回應:', data);
+            .then(function() {
+                console.log('LINE 通知請求已發送到 Google Apps Script');
+                showMessage('✓ LINE 通知已發送', 'success');
             })
             .catch(function(error) {
                 console.error('LINE 通知錯誤:', error);
