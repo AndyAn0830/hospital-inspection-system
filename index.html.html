@@ -2141,7 +2141,9 @@
                 if (lineEnabled === 'true') {
                     document.getElementById('lineApiEnabled').checked = true;
                 }
-                    // 如果啟用自動載入，在初始化時載入資料
+                
+                // 如果啟用自動載入，在初始化時載入資料
+                if (autoLoad === 'true') {
                     setTimeout(downloadFromGoogleSheets, 1000);
                 }
             } catch (e) {
