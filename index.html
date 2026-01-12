@@ -443,7 +443,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px;
+            padding: 12px 15px;
             background: white;
             border-radius: 8px;
             border: 2px solid #ddd;
@@ -457,18 +457,19 @@
 
         .atp-item-label {
             flex: 1;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 500;
             margin: 0;
             color: #333;
+            min-width: 120px;
         }
-
+        
         .atp-radio-group {
             display: flex;
-            gap: 20px;
+            gap: 12px;
             align-items: center;
         }
-
+        
         .radio-option {
             display: flex;
             align-items: center;
@@ -497,6 +498,11 @@
             border-color: #dc3545;
             background-color: #f8d7da;
         }
+        
+        .radio-option.na {
+            border-color: #6c757d;
+            background-color: #e2e3e5;
+        }
 
         .radio-option input[type="radio"] {
             width: 18px;
@@ -521,6 +527,10 @@
 
         .radio-option.fail label {
             color: #721c24;
+        }
+        
+        .radio-option.na label {
+            color: #495057;
         }
 
         .review-section {
@@ -638,6 +648,21 @@
             background: #d1ecf1;
             border-color: #bee5eb;
             color: #0c5460;
+        }
+        
+        .info-box.green {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #d63384;
         }
 
         .info-box.orange {
@@ -865,6 +890,14 @@
                 <div class="form-section">
                     <h2>☁️ Google Sheets 雲端同步設定</h2>
                     
+                    <div class="info-box green" style="margin-bottom: 20px;">
+                        <strong>🎉 自動綁定功能：</strong><br>
+                        分享系統連結時，可以在網址後加上 <code>?sheet=您的Google_Apps_Script網址</code><br>
+                        其他人開啟連結就會自動連結到雲端，不需要手動設定！<br><br>
+                        <strong>範例：</strong><br>
+                        <code>系統網址.html?sheet=https://script.google.com/macros/s/xxxxx/exec</code>
+                    </div>
+                    
                     <div class="info-box blue" style="margin-bottom: 20px;">
                         <strong>📌 功能說明：</strong><br>
                         啟用此功能後，所有巡檢記錄會自動同步到 Google 試算表，讓不同裝置都能看到所有記錄。
@@ -896,6 +929,57 @@
                     </div>
 
                     <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e9ecef;">
+                        <h3>📱 LINE Messaging API 設定</h3>
+                        
+                        <div class="info-box" style="margin-bottom: 20px; background: #fff3cd; border-left: 4px solid #ffc107;">
+                            <strong>⚠️ 注意：</strong> LINE Notify 將於 2025/3/31 停止服務，請改用 LINE Messaging API。
+                            <br><a href="https://developers.line.biz/" target="_blank">→ 前往 LINE Developers 設定</a>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lineChannelAccessToken">Channel Access Token *</label>
+                            <input type="password" id="lineChannelAccessToken" placeholder="貼上 Channel Access Token">
+                            <small style="color: #666; display: block; margin-top: 5px;">
+                                在 LINE Developers → Channel → Messaging API 分頁取得
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lineTargetId">接收對象 ID *</label>
+                            <input type="text" id="lineTargetId" placeholder="User ID 或 Group ID">
+                            <small style="color: #666; display: block; margin-top: 5px;">
+                                User ID（個人）：U 開頭｜Group ID（群組，推薦）：C 開頭
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="lineApiEnabled" onchange="toggleLineApi()" style="width: auto;">
+                                <span style="font-weight: normal;">啟用 LINE 通知（有巡檢記錄或複查不合格時發送）</span>
+                            </label>
+                        </div>
+                        
+                        <button class="btn" onclick="testLineApi()" style="background: #06C755; color: white;">
+                            🔔 測試 LINE 通知
+                        </button>
+                        
+                        <button class="btn btn-secondary" onclick="saveLineApiSettings()" style="margin-left: 10px;">
+                            💾 儲存 LINE 設定
+                        </button>
+                        
+                        <div class="info-box" style="margin-top: 15px;">
+                            <strong>📖 設定教學：</strong>
+                            <ol style="margin-left: 20px; margin-top: 10px;">
+                                <li>到 <a href="https://developers.line.biz/" target="_blank">LINE Developers</a> 建立 Messaging API Channel</li>
+                                <li>取得 Channel Access Token</li>
+                                <li>取得 User ID 或 Group ID（加機器人為好友或邀請進群組）</li>
+                                <li>填入上方欄位並儲存</li>
+                                <li>測試通知確認運作正常</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e9ecef;">
                         <h3>同步選項</h3>
                         
                         <div class="form-group">
@@ -917,18 +1001,22 @@
                         <h3>手動同步操作</h3>
                         <div style="margin-top: 15px;">
                             <button class="btn btn-primary" onclick="uploadToGoogleSheets()">
-                                ⬆️ 上傳所有記錄到 Google Sheets
+                                ⬆️ 上傳未上傳的記錄
                             </button>
                             <button class="btn btn-secondary" onclick="downloadFromGoogleSheets()" style="margin-left: 10px;">
                                 ⬇️ 從 Google Sheets 載入記錄
+                            </button>
+                            <button class="btn" onclick="resetUploadStatus()" style="margin-left: 10px; background: #6c757d; color: white;">
+                                🔄 重設上傳狀態
                             </button>
                         </div>
                         <div class="info-box" style="margin-top: 15px;">
                             <strong>注意：</strong>
                             <ul style="margin-left: 20px; margin-top: 10px;">
-                                <li>「上傳」會將本機所有記錄傳送到 Google Sheets</li>
+                                <li>「上傳未上傳的記錄」只會上傳尚未同步的記錄，避免重複</li>
                                 <li>「載入」會將 Google Sheets 的記錄合併到本機</li>
-                                <li>系統會自動避免重複記錄</li>
+                                <li>「重設上傳狀態」會將所有記錄標記為未上傳（用於重新上傳）</li>
+                                <li>系統會自動追蹤已上傳的記錄，不會重複上傳</li>
                             </ul>
                         </div>
                     </div>
@@ -1005,7 +1093,8 @@
             '7. 陪病床', '15. 床旁桌',
             '8. 電腦開關', '16. 垃圾桶'
         ];
-
+        
+        // ATP項目參考照片說明
         // 登入
         function login() {
             var name = document.getElementById('loginName').value.trim();
@@ -1058,6 +1147,22 @@
         function init() {
             console.log('系統初始化中...');
             
+            // 檢查URL參數，自動綁定Google Sheets
+            try {
+                var urlParams = new URLSearchParams(window.location.search);
+                var sheetUrl = urlParams.get('sheet');
+                if (sheetUrl) {
+                    // 解碼URL（如果有編碼）
+                    sheetUrl = decodeURIComponent(sheetUrl);
+                    // 儲存到localStorage
+                    localStorage.setItem('googleSheetsUrl', sheetUrl);
+                    console.log('已自動綁定 Google Sheets:', sheetUrl);
+                    showMessage('✓ 已自動連結雲端資料庫', 'success');
+                }
+            } catch (e) {
+                console.log('URL參數解析失敗:', e);
+            }
+            
             // 載入歷史記錄
             try {
                 var saved = localStorage.getItem('hospitalRecords_v2025');
@@ -1070,9 +1175,27 @@
                 inspectionRecords = [];
             }
             
-            // 設定預設時間
-            var now = new Date();
-            document.getElementById('inspectionDateTime').value = now.toISOString().slice(0, 16);
+            // 設定並持續更新當前時間
+            function updateCurrentTime() {
+                var now = new Date();
+                
+                // 直接使用本地時間，格式化為 YYYY-MM-DDTHH:MM
+                var year = now.getFullYear();
+                var month = String(now.getMonth() + 1).padStart(2, '0');
+                var day = String(now.getDate()).padStart(2, '0');
+                var hours = String(now.getHours()).padStart(2, '0');
+                var minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                var timeString = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+                
+                document.getElementById('inspectionDateTime').value = timeString;
+            }
+            
+            // 初始化時間
+            updateCurrentTime();
+            
+            // 每秒更新一次時間
+            setInterval(updateCurrentTime, 1000);
             
             // 綁定事件
             document.getElementById('buildingSelect').addEventListener('change', handleAreaChange);
@@ -1223,9 +1346,11 @@
                 html += '<div class="atp-grid">';
                 
                 for (var i = 0; i < atpItems.length; i++) {
+                    var itemName = atpItems[i];
                     var itemId = recordCounter + '_atp_' + (i + 1);
+                    
                     html += '<div class="atp-item">';
-                    html += '<label class="atp-item-label">' + atpItems[i] + '</label>';
+                    html += '<label class="atp-item-label">' + itemName + '</label>';
                     html += '<div class="atp-radio-group">';
                     html += '<div class="radio-option pass">';
                     html += '<input type="radio" id="' + itemId + '_pass" name="atp_' + recordCounter + '_' + (i + 1) + '" value="合格">';
@@ -1234,6 +1359,10 @@
                     html += '<div class="radio-option fail">';
                     html += '<input type="radio" id="' + itemId + '_fail" name="atp_' + recordCounter + '_' + (i + 1) + '" value="不合格">';
                     html += '<label for="' + itemId + '_fail">✗ 不合格</label>';
+                    html += '</div>';
+                    html += '<div class="radio-option na">';
+                    html += '<input type="radio" id="' + itemId + '_na" name="atp_' + recordCounter + '_' + (i + 1) + '" value="無須檢測">';
+                    html += '<label for="' + itemId + '_na">− 無須檢測</label>';
                     html += '</div>';
                     html += '</div>';
                     html += '</div>';
@@ -1315,7 +1444,7 @@
                 var item = record.querySelector('[name="item"]');
                 var wardName = record.querySelector('[name="wardName"]');
                 
-                if (area === '公共區域' && !item.value.trim()) {
+                if (area === '公共區域' && (!item || !item.value.trim())) {
                     showMessage('公共區域必須填寫巡檢項目!', 'error');
                     return;
                 }
@@ -1346,8 +1475,8 @@
                 
                 var itemData = {
                     wardName: wardName ? wardName.value : '',
-                    item: item.value || 'ATP檢測為主',
-                    notes: record.querySelector('[name="notes"]').value,
+                    item: (item && item.value) ? item.value : 'ATP檢測為主',
+                    notes: record.querySelector('[name="notes"]') ? record.querySelector('[name="notes"]').value : '',
                     photos: photos,
                     atpResults: atpResults,
                     reviewStatus: 'pending',
@@ -1369,7 +1498,8 @@
                 submitTime: new Date().toISOString(),
                 building: building,
                 area: area,
-                items: items
+                items: items,
+                uploadedToCloud: false  // 新增：追蹤是否已上傳到雲端
             };
             
             // 儲存
@@ -1381,6 +1511,41 @@
             }
             
             showMessage('巡檢記錄提交成功!', 'success');
+            
+            // 如果啟用自動同步，自動上傳到 Google Sheets
+            var autoSync = localStorage.getItem('autoSyncEnabled') === 'true';
+            if (autoSync) {
+                uploadSingleRecordToCloud(inspectionRecord);
+            }
+            
+            // 如果啟用 LINE API 通知，智能判斷是否發送
+            var lineApiEnabled = localStorage.getItem('lineApiEnabled') === 'true';
+            if (lineApiEnabled) {
+                // 判斷是否需要發送通知
+                var shouldNotify = false;
+                var hasDefect = false;
+                var hasFailedReview = false;
+                
+                for (var i = 0; i < items.length; i++) {
+                    // 有填寫備註（有巡檢記錄/缺失）
+                    if (items[i].notes && items[i].notes.trim() !== '') {
+                        shouldNotify = true;
+                        hasDefect = true;
+                    }
+                    
+                    // 複查不合格
+                    if (items[i].reviewStatus === 'completed' && 
+                        items[i].reviewResult === '不合格') {
+                        shouldNotify = true;
+                        hasFailedReview = true;
+                    }
+                }
+                
+                // 發送通知
+                if (shouldNotify) {
+                    sendLineApiNotification(inspectionRecord, hasDefect, hasFailedReview);
+                }
+            }
             
             // 重置表單
             resetForm();
@@ -1654,7 +1819,7 @@
             document.getElementById('recordModal').classList.remove('show');
             currentViewingRecord = null;
         }
-
+        
         // 處理複查照片上傳
         function handleReviewPhotoUpload(input, itemIndex) {
             var files = input.files;
@@ -1960,6 +2125,22 @@
                 }
                 if (autoLoad === 'true') {
                     document.getElementById('autoLoadEnabled').checked = true;
+                }
+                
+                // 載入 LINE 設定
+                var lineToken = localStorage.getItem('lineChannelAccessToken');
+                var lineTargetId = localStorage.getItem('lineTargetId');
+                var lineEnabled = localStorage.getItem('lineApiEnabled');
+                
+                if (lineToken) {
+                    document.getElementById('lineChannelAccessToken').value = lineToken;
+                }
+                if (lineTargetId) {
+                    document.getElementById('lineTargetId').value = lineTargetId;
+                }
+                if (lineEnabled === 'true') {
+                    document.getElementById('lineApiEnabled').checked = true;
+                }
                     // 如果啟用自動載入，在初始化時載入資料
                     setTimeout(downloadFromGoogleSheets, 1000);
                 }
@@ -2038,7 +2219,7 @@
             showMessage(enabled ? '已啟用自動載入' : '已關閉自動載入', 'info');
         }
         
-        // 上傳到 Google Sheets
+        // 上傳到 Google Sheets（只上傳未上傳的記錄）
         function uploadToGoogleSheets() {
             var url = localStorage.getItem('googleSheetsUrl');
             
@@ -2053,12 +2234,22 @@
                 return;
             }
             
-            showMessage('正在上傳 ' + inspectionRecords.length + ' 筆記錄...', 'info');
+            // 篩選出未上傳的記錄
+            var unuploadedRecords = inspectionRecords.filter(function(record) {
+                return !record.uploadedToCloud;
+            });
+            
+            if (unuploadedRecords.length === 0) {
+                showMessage('✓ 所有記錄都已上傳，無需重複上傳', 'success');
+                return;
+            }
+            
+            showMessage('正在上傳 ' + unuploadedRecords.length + ' 筆未上傳的記錄...', 'info');
             
             // 準備上傳資料
             var uploadData = {
                 action: 'upload',
-                records: inspectionRecords
+                records: unuploadedRecords
             };
             
             fetch(url, {
@@ -2070,11 +2261,404 @@
                 body: JSON.stringify(uploadData)
             })
             .then(function() {
-                showMessage('✓ 成功上傳 ' + inspectionRecords.length + ' 筆記錄到 Google Sheets', 'success');
+                // 標記這些記錄為已上傳
+                for (var i = 0; i < inspectionRecords.length; i++) {
+                    for (var j = 0; j < unuploadedRecords.length; j++) {
+                        if (inspectionRecords[i].id === unuploadedRecords[j].id) {
+                            inspectionRecords[i].uploadedToCloud = true;
+                        }
+                    }
+                }
+                
+                // 儲存更新後的記錄
+                try {
+                    localStorage.setItem('hospitalRecords_v2025', JSON.stringify(inspectionRecords));
+                } catch (e) {
+                    console.error('儲存失敗:', e);
+                }
+                
+                showMessage('✓ 成功上傳 ' + unuploadedRecords.length + ' 筆記錄到 Google Sheets', 'success');
             })
             .catch(function(error) {
                 showMessage('上傳失敗: ' + error.message, 'error');
                 console.error('上傳錯誤:', error);
+            });
+        }
+        
+        // 上傳單筆記錄到雲端（自動同步使用）
+        function uploadSingleRecordToCloud(record) {
+            var url = localStorage.getItem('googleSheetsUrl');
+            
+            if (!url) {
+                console.log('未設定 Google Sheets 網址，跳過自動上傳');
+                return;
+            }
+            
+            var uploadData = {
+                action: 'upload',
+                records: [record]
+            };
+            
+            fetch(url, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(uploadData)
+            })
+            .then(function() {
+                // 標記為已上傳
+                record.uploadedToCloud = true;
+                
+                // 更新 localStorage
+                for (var i = 0; i < inspectionRecords.length; i++) {
+                    if (inspectionRecords[i].id === record.id) {
+                        inspectionRecords[i].uploadedToCloud = true;
+                        break;
+                    }
+                }
+                
+                try {
+                    localStorage.setItem('hospitalRecords_v2025', JSON.stringify(inspectionRecords));
+                } catch (e) {
+                    console.error('儲存失敗:', e);
+                }
+                
+                console.log('已自動上傳記錄:', record.id);
+            })
+            .catch(function(error) {
+                console.error('自動上傳失敗:', error);
+            });
+        }
+        
+        // 重設所有記錄的上傳狀態
+        function resetUploadStatus() {
+            if (!confirm('確定要重設所有記錄的上傳狀態嗎？\n\n這會將所有記錄標記為「未上傳」，下次點擊上傳時會重新上傳所有記錄。')) {
+                return;
+            }
+            
+            var resetCount = 0;
+            for (var i = 0; i < inspectionRecords.length; i++) {
+                if (inspectionRecords[i].uploadedToCloud) {
+                    inspectionRecords[i].uploadedToCloud = false;
+                    resetCount++;
+                }
+            }
+            
+            // 儲存更新後的記錄
+            try {
+                localStorage.setItem('hospitalRecords_v2025', JSON.stringify(inspectionRecords));
+                showMessage('✓ 已重設 ' + resetCount + ' 筆記錄的上傳狀態', 'success');
+            } catch (e) {
+                console.error('儲存失敗:', e);
+                showMessage('重設失敗: ' + e.message, 'error');
+            }
+        }
+        
+        // ========== LINE Messaging API 功能 ==========
+        
+        // 儲存 LINE API 設定
+        function saveLineApiSettings() {
+            var token = document.getElementById('lineChannelAccessToken').value.trim();
+            var targetId = document.getElementById('lineTargetId').value.trim();
+            
+            if (!token || !targetId) {
+                showMessage('請填寫完整的 LINE API 設定', 'error');
+                return;
+            }
+            
+            localStorage.setItem('lineChannelAccessToken', token);
+            localStorage.setItem('lineTargetId', targetId);
+            showMessage('✓ LINE API 設定已儲存', 'success');
+        }
+        
+        // 切換 LINE API 通知
+        function toggleLineApi() {
+            var enabled = document.getElementById('lineApiEnabled').checked;
+            localStorage.setItem('lineApiEnabled', enabled);
+            showMessage(enabled ? '已啟用 LINE 通知' : '已關閉 LINE 通知', 'info');
+        }
+        
+        // 測試 LINE API 通知
+        function testLineApi() {
+            var token = document.getElementById('lineChannelAccessToken').value.trim();
+            var targetId = document.getElementById('lineTargetId').value.trim();
+            
+            if (!token || !targetId) {
+                showMessage('請先填寫 LINE API 設定', 'error');
+                return;
+            }
+            
+            var message = {
+                type: 'text',
+                text: '🔔 測試通知\n\n' +
+                      '系統：花蓮慈濟醫院環境巡檢系統\n' +
+                      '時間：' + new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }) + '\n' +
+                      '狀態：LINE Messaging API 正常運作 ✓'
+            };
+            
+            sendLineApiMessage(token, targetId, [message]);
+        }
+        
+        // 發送 LINE API 通知（提交記錄時）
+        function sendLineApiNotification(record, hasDefect, hasFailedReview) {
+            var token = localStorage.getItem('lineChannelAccessToken');
+            var targetId = localStorage.getItem('lineTargetId');
+            
+            if (!token || !targetId) {
+                console.log('未設定 LINE API');
+                return;
+            }
+            
+            // 建立 Flex Message
+            var flexMessage = createFlexMessage(record, hasDefect, hasFailedReview);
+            
+            sendLineApiMessage(token, targetId, [flexMessage]);
+        }
+        
+        // 建立 Flex Message（智能通知）
+        function createFlexMessage(record, hasDefect, hasFailedReview) {
+            // 判斷通知類型
+            var isWarning = hasDefect || hasFailedReview;
+            var title = isWarning ? '⚠️ 環境巡檢 - 需要注意' : '🏥 環境巡檢記錄';
+            var headerColor = isWarning ? '#f44336' : '#06C755';  // 紅色或綠色
+            var footerColor = isWarning ? '#ffebee' : '#f5f5f5';
+            var footerText = isWarning ? '❗請儘速處理' : '✅ 記錄已提交';
+            var footerTextColor = isWarning ? '#d32f2f' : '#999999';
+            
+            // 組織項目內容
+            var itemsContent = [];
+            var itemsToShow = [];
+            
+            // 收集需要顯示的項目
+            if (record.items && record.items.length > 0) {
+                for (var i = 0; i < record.items.length; i++) {
+                    var item = record.items[i];
+                    
+                    // 有備註或複查不合格的項目
+                    if ((item.notes && item.notes.trim() !== '') || 
+                        (item.reviewStatus === 'completed' && item.reviewResult === '不合格')) {
+                        itemsToShow.push(item);
+                    }
+                }
+            }
+            
+            // 組織顯示內容
+            for (var i = 0; i < itemsToShow.length; i++) {
+                var item = itemsToShow[i];
+                
+                // 項目標題
+                var itemText = (i + 1) + '. ';
+                if (item.wardName) {
+                    itemText += '病房：' + item.wardName + '\n   ';
+                }
+                itemText += '項目：' + (item.item || '一般巡檢');
+                
+                // 備註/缺失
+                if (item.notes && item.notes.trim() !== '') {
+                    itemText += '\n   📝 備註：' + item.notes;
+                }
+                
+                // 複查狀態
+                if (item.reviewStatus === 'completed') {
+                    if (item.reviewResult === '不合格') {
+                        itemText += '\n   ⚠️ 複查：不合格';
+                        if (item.reviewNotes) {
+                            itemText += ' - ' + item.reviewNotes;
+                        }
+                    } else if (item.reviewResult === '合格') {
+                        itemText += '\n   ✅ 複查：已通過';
+                    }
+                }
+                
+                // ATP 結果
+                if (item.atpResults) {
+                    var atpPass = 0;
+                    var atpTotal = 0;
+                    for (var key in item.atpResults) {
+                        atpTotal++;
+                        if (item.atpResults[key] === '合格') {
+                            atpPass++;
+                        }
+                    }
+                    if (atpTotal > 0) {
+                        var atpStatus = (atpPass === atpTotal) ? ' 合格' : ' ⚠️ 不合格';
+                        itemText += '\n   ATP：' + atpPass + '/' + atpTotal + atpStatus;
+                    }
+                }
+                
+                var textColor = isWarning ? '#d32f2f' : '#666666';
+                
+                itemsContent.push({
+                    type: 'text',
+                    text: itemText,
+                    wrap: true,
+                    size: 'sm',
+                    color: textColor
+                });
+                
+                // 分隔
+                if (i < itemsToShow.length - 1) {
+                    itemsContent.push({
+                        type: 'separator',
+                        margin: 'md'
+                    });
+                }
+            }
+            
+            // 項目標題
+            var itemsTitle = isWarning ? '⚠️ 需要注意的項目' : '📋 巡檢項目';
+            var itemsTitleColor = isWarning ? '#d32f2f' : '#333333';
+            
+            // Flex Message 結構
+            var flexMessage = {
+                type: 'flex',
+                altText: title,
+                contents: {
+                    type: 'bubble',
+                    header: {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [{
+                            type: 'text',
+                            text: title,
+                            weight: 'bold',
+                            color: '#ffffff',
+                            size: 'lg'
+                        }],
+                        backgroundColor: headerColor,
+                        paddingAll: '15px'
+                    },
+                    body: {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [
+                            {
+                                type: 'box',
+                                layout: 'vertical',
+                                margin: 'none',
+                                spacing: 'sm',
+                                contents: [
+                                    {
+                                        type: 'box',
+                                        layout: 'baseline',
+                                        spacing: 'sm',
+                                        contents: [
+                                            { type: 'text', text: '👤', size: 'sm', flex: 0 },
+                                            { type: 'text', text: '巡檢人員', size: 'sm', color: '#999999', flex: 2 },
+                                            { type: 'text', text: record.inspector, size: 'sm', color: '#333333', flex: 4, wrap: true }
+                                        ]
+                                    },
+                                    {
+                                        type: 'box',
+                                        layout: 'baseline',
+                                        spacing: 'sm',
+                                        contents: [
+                                            { type: 'text', text: '📅', size: 'sm', flex: 0 },
+                                            { type: 'text', text: '巡檢時間', size: 'sm', color: '#999999', flex: 2 },
+                                            { type: 'text', text: record.dateTime, size: 'sm', color: '#333333', flex: 4, wrap: true }
+                                        ]
+                                    },
+                                    {
+                                        type: 'box',
+                                        layout: 'baseline',
+                                        spacing: 'sm',
+                                        contents: [
+                                            { type: 'text', text: '🏢', size: 'sm', flex: 0 },
+                                            { type: 'text', text: '棟別', size: 'sm', color: '#999999', flex: 2 },
+                                            { type: 'text', text: record.building, size: 'sm', color: '#333333', flex: 4, wrap: true }
+                                        ]
+                                    },
+                                    {
+                                        type: 'box',
+                                        layout: 'baseline',
+                                        spacing: 'sm',
+                                        contents: [
+                                            { type: 'text', text: '📍', size: 'sm', flex: 0 },
+                                            { type: 'text', text: '區域', size: 'sm', color: '#999999', flex: 2 },
+                                            { type: 'text', text: record.area, size: 'sm', color: '#333333', flex: 4, wrap: true }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                type: 'separator',
+                                margin: 'lg'
+                            },
+                            {
+                                type: 'box',
+                                layout: 'vertical',
+                                margin: 'lg',
+                                spacing: 'sm',
+                                contents: [
+                                    {
+                                        type: 'text',
+                                        text: itemsTitle,
+                                        weight: 'bold',
+                                        size: 'sm',
+                                        color: itemsTitleColor,
+                                        margin: 'none'
+                                    }
+                                ].concat(itemsContent)
+                            }
+                        ]
+                    },
+                    footer: {
+                        type: 'box',
+                        layout: 'vertical',
+                        contents: [{
+                            type: 'text',
+                            text: footerText,
+                            size: isWarning ? 'sm' : 'xs',
+                            color: footerTextColor,
+                            weight: isWarning ? 'bold' : 'normal',
+                            align: 'center'
+                        }],
+                        backgroundColor: footerColor
+                    }
+                }
+            };
+            
+            return flexMessage;
+        }
+        
+        // 建立 Flex Message
+        
+        // 發送 LINE API 訊息（核心函數）
+        function sendLineApiMessage(token, targetId, messages) {
+            var url = 'https://api.line.me/v2/bot/message/push';
+            
+            var data = {
+                to: targetId,
+                messages: messages
+            };
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    console.log('LINE 通知發送成功');
+                    showMessage('✓ LINE 通知已發送', 'success');
+                    return response.json();
+                } else {
+                    return response.json().then(function(error) {
+                        throw new Error('LINE API 錯誤: ' + error.message);
+                    });
+                }
+            })
+            .then(function(data) {
+                console.log('LINE API 回應:', data);
+            })
+            .catch(function(error) {
+                console.error('LINE 通知錯誤:', error);
+                showMessage('LINE 通知發送失敗：' + error.message, 'error');
             });
         }
         
