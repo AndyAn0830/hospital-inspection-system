@@ -2303,13 +2303,16 @@
             
             fetch(url, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(uploadData)
             })
-            .then(function() {
+            .then(function(response) {
+                return response.text();
+            })
+            .then(function(text) {
+                console.log('上傳回應:', text);
                 // 標記為已上傳
                 record.uploadedToCloud = true;
                 
